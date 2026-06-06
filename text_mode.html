@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text/Speech Mode - Sign Language Reader</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        h1 {
+            font-size: 1.8rem;
+        }
+        .back-btn {
+            background: #667eea;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: white;
+            transition: 0.3s;
+        }
+        .back-btn:hover {
+            background: #5a67d8;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+        }
+        .card h3 {
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 15px;
+            border: none;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+        textarea:focus {
+            outline: none;
+            background: rgba(255,255,255,0.2);
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: 0.3s;
+        }
+        .btn-convert {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        .btn-convert:hover {
+            transform: scale(1.02);
+        }
+        .btn-mic {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+        }
+        .btn-mic:hover {
+            transform: scale(1.02);
+        }
+        .btn-mic.listening {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .gesture-box {
+            text-align: center;
+            padding: 30px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            min-height: 200px;
+        }
+        .gesture-emoji {
+            font-size: 80px;
+            margin-bottom: 15px;
+        }
+        .gesture-text {
+            font-size: 18px;
+            word-wrap: break-word;
+            line-height: 1.5;
+        }
+        .examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .example {
+            background: rgba(255,255,255,0.15);
+            padding: 8px 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+        .example:hover {
+            background: rgba(255,255,255,0.25);
+        }
+        .history-item {
+            background: rgba(255,255,255,0.08);
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+        }
+        .history-text {
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        .history-gesture {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 13px;
+        }
+        .status.success {
+            background: rgba(76,175,80,0.3);
+            color: #4CAF50;
+        }
+        .status.error {
+            background: rgba(244,67,54,0.3);
+            color: #f44336;
+        }
+        .flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .icon-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            margin-left: 8px;
+            transition: 0.3s;
+        }
+        .icon-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .loading {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⌨️ Text / Speech Mode</h1>
+            <a href="welcome.html" class="back-btn">← Back to Home</a>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>📝 Enter Text or Speak</h3>
+                <textarea id="inputText" rows="4" placeholder="Type something here...&#10;&#10;Examples:&#10;hello&#10;how are you&#10;i love you&#10;good morning&#10;thank you"></textarea>
+                <button class="btn-convert" id="convertBtn">🔄 Convert to Gesture</button>
+                <button class="btn-mic" id="micBtn">🎤 Start Speaking</button>
+                <div id="statusMsg" class="status"></div>
+                <div class="examples">
+                    <div class="example" data-text="hello">👋 Hello</div>
+                    <div class="example" data-text="how are you">❓ How are you</div>
+                    <div class="example" data-text="i love you">❤️ I love you</div>
+                    <div class="example" data-text="good morning">🌅 Good morning</div>
+                    <div class="example" data-text="thank you">🙏 Thank you</div>
+                    <div class="example" data-text="goodbye">👋 Goodbye</div>
+                    <div class="example" data-text="see you later">👀 See you later</div>
+                    <div class="example" data-text="nice to meet you">🤝 Nice to meet you</div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <h3>🎯 Gesture Output</h3>
+                    <div class="gesture-box">
+                        <div class="gesture-emoji" id="outputEmoji">🤟</div>
+                        <div class="gesture-text" id="outputText">Ready</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="flex">
+                        <h3>📜 History</h3>
+                        <div>
+                            <button class="icon-btn" id="refreshHistoryBtn">🔄</button>
+                            <button class="icon-btn" id="clearHistoryBtn">🗑️</button>
+                        </div>
+                    </div>
+                    <div id="historyList">Loading...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const inputText = document.getElementById('inputText');
+        const convertBtn = document.getElementById('convertBtn');
+        const micBtn = document.getElementById('micBtn');
+        const outputEmoji = document.getElementById('outputEmoji');
+        const outputText = document.getElementById('outputText');
+        const statusMsg = document.getElementById('statusMsg');
+        const historyList = document.getElementById('historyList');
+
+        let recognition = null;
+        let isListening = false;
+
+        function showStatus(msg, type) {
+            statusMsg.textContent = msg;
+            statusMsg.className = `status ${type}`;
+            setTimeout(() => {
+                if (statusMsg.textContent === msg) {
+                    statusMsg.textContent = '';
+                    statusMsg.className = 'status';
+                }
+            }, 3000);
+        }
+
+        async function convertText(text) {
+            if (!text.trim()) {
+                showStatus('Please enter some text!', 'error');
+                return;
+            }
+
+            outputText.innerHTML = '<div class="loading"></div>';
+            outputEmoji.textContent = '⏳';
+
+            try {
+                const response = await fetch('http://localhost:5000/text-to-gesture', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text })
+                });
+                
+                const result = await response.json();
+
+                if (result.success) {
+                    outputText.innerHTML = result.gesture;
+                    outputEmoji.textContent = result.emoji || '🤟';
+                    showStatus(result.message, 'success');
+                    loadHistory();
+                } else {
+                    outputText.innerHTML = 'Error: ' + result.error;
+                    outputEmoji.textContent = '❌';
+                    showStatus('Conversion failed', 'error');
+                }
+            } catch (error) {
+                outputText.innerHTML = 'Backend not running! Start with: python app.py';
+                outputEmoji.textContent = '🔌';
+                showStatus('Cannot connect to backend', 'error');
+            }
+        }
+
+        async function loadHistory() {
+            try {
+                const response = await fetch('http://localhost:5000/history');
+                const data = await response.json();
+                
+                if (data.success && data.history && data.history.length > 0) {
+                    const textHistory = data.history.filter(h => h.mode === 'text');
+                    if (textHistory.length > 0) {
+                        historyList.innerHTML = textHistory.slice(0, 20).map(h => `
+                            <div class="history-item">
+                                <div class="history-text">📝 "${h.input_text || h.gesture_name}"</div>
+                                <div class="history-gesture">${h.gesture_name}</div>
+                            </div>
+                        `).join('');
+                    } else {
+                        historyList.innerHTML = '<div class="history-item">No text conversions yet</div>';
+                    }
+                } else {
+                    historyList.innerHTML = '<div class="history-item">No history yet</div>';
+                }
+            } catch (error) {
+                historyList.innerHTML = '<div class="history-item">Cannot load history</div>';
+            }
+        }
+
+        async function clearHistory() {
+            if (confirm('Clear all history?')) {
+                try {
+                    await fetch('http://localhost:5000/clear_history', { method: 'DELETE' });
+                    loadHistory();
+                    showStatus('History cleared!', 'success');
+                } catch (error) {
+                    showStatus('Error clearing history', 'error');
+                }
+            }
+        }
+
+        function initSpeech() {
+            if (!('webkitSpeechRecognition' in window)) {
+                showStatus('Speech recognition not supported. Use Chrome!', 'error');
+                return false;
+            }
+            
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+            
+            recognition.onstart = () => {
+                isListening = true;
+                micBtn.textContent = '🎤 Listening... Speak now';
+                micBtn.classList.add('listening');
+                showStatus('🎤 Listening... Speak now!', 'success');
+            };
+            
+            recognition.onresult = (event) => {
+                const text = event.results[0][0].transcript;
+                inputText.value = text;
+                convertText(text);
+                isListening = false;
+                micBtn.textContent = '🎤 Start Speaking';
+                micBtn.classList.remove('listening');
+            };
+            
+            recognition.onerror = (event) => {
+                showStatus('Speech error: ' + event.error, 'error');
+                isListening = false;
+                micBtn.textContent = '🎤 Start Speaking';
+                micBtn.classList.remove('listening');
+            };
+            
+            recognition.onend = () => {
+                if (isListening) {
+                    isListening = false;
+                    micBtn.textContent = '🎤 Start Speaking';
+                    micBtn.classList.remove('listening');
+                }
+            };
+            
+            return true;
+        }
+
+        convertBtn.onclick = () => convertText(inputText.value);
+        
+        micBtn.onclick = () => {
+            if (isListening) {
+                if (recognition) recognition.stop();
+                isListening = false;
+                micBtn.textContent = '🎤 Start Speaking';
+                micBtn.classList.remove('listening');
+            } else {
+                if (!recognition) {
+                    if (!initSpeech()) return;
+                }
+                recognition.start();
+            }
+        };
+
+        document.querySelectorAll('.example').forEach(btn => {
+            btn.onclick = () => {
+                const text = btn.getAttribute('data-text');
+                inputText.value = text;
+                convertText(text);
+            };
+        });
+
+        document.getElementById('refreshHistoryBtn').onclick = loadHistory;
+        document.getElementById('clearHistoryBtn').onclick = clearHistory;
+
+        loadHistory();
+        console.log('Text/Speech Mode Ready');
+    </script>
+</body>
+</html>

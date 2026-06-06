@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Commands - Sign Language Reader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-animation span {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.1);
+            padding: 10px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .mic-card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.3s;
+        }
+
+        .mic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .mic-icon {
+            font-size: 5rem;
+            animation: pulse 2s infinite;
+            cursor: pointer;
+            display: inline-block;
+            transition: 0.3s;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 100px;
+        }
+
+        .mic-icon:hover {
+            transform: scale(1.1);
+            background: rgba(102,126,234,0.3);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .mic-icon.listening {
+            animation: listening 1s infinite;
+            background: rgba(76,175,80,0.5);
+            box-shadow: 0 0 30px #4CAF50;
+        }
+
+        @keyframes listening {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .status.listening {
+            background: rgba(76,175,80,0.3);
+            color: #4CAF50;
+            animation: glow 1s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px #4CAF50; }
+            50% { box-shadow: 0 0 20px #4CAF50; }
+        }
+
+        .status.command {
+            background: rgba(33,150,243,0.3);
+            color: #2196F3;
+        }
+
+        .status.error {
+            background: rgba(244,67,54,0.3);
+            color: #f44336;
+        }
+
+        .status.success {
+            background: rgba(76,175,80,0.3);
+            color: #4CAF50;
+        }
+
+        .command-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            word-wrap: break-word;
+        }
+
+        .command-text span {
+            color: #4CAF50;
+            font-size: 1.5rem;
+        }
+
+        .commands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .command-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 18px;
+            text-align: center;
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .command-card:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-5px);
+            border-color: rgba(102,126,234,0.5);
+        }
+
+        .command-voice {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #4CAF50;
+            margin-bottom: 5px;
+            font-family: monospace;
+        }
+
+        .command-action {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        .command-emoji {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .quick-btn {
+            background: rgba(102,126,234,0.3);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .quick-btn:hover {
+            background: rgba(102,126,234,0.6);
+            transform: scale(1.05);
+        }
+
+        .history-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 70vh;
+            overflow-y: auto;
+            z-index: 1000;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .history-popup.active {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -40%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .close-popup {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🗣️ Voice Commands</h1>
+            <a href="welcome.html" class="back-btn">← Back to Home</a>
+        </div>
+
+        <div class="mic-card">
+            <div class="mic-icon" id="micIcon">🎤</div>
+            <div class="status" id="status">🎙️ Click the microphone and say a command</div>
+            <div class="command-text" id="commandText">
+                <span>💬</span> Ready for your command
+            </div>
+            <div class="quick-actions">
+                <button class="quick-btn" data-command="open camera">📹 Open Camera</button>
+                <button class="quick-btn" data-command="open text">⌨️ Open Text Mode</button>
+                <button class="quick-btn" data-command="open dashboard">📊 Open Dashboard</button>
+                <button class="quick-btn" data-command="show history">📜 Show History</button>
+                <button class="quick-btn" data-command="back">🏠 Back to Home</button>
+                <button class="quick-btn" data-command="help">❓ Help</button>
+            </div>
+        </div>
+
+        <div class="commands-grid">
+            <div class="command-card">
+                <div class="command-emoji">📹</div>
+                <div class="command-voice">"Open Camera" / "Start Camera"</div>
+                <div class="command-action">Opens Camera Mode</div>
+            </div>
+            <div class="command-card">
+                <div class="command-emoji">⌨️</div>
+                <div class="command-voice">"Open Text" / "Text Mode"</div>
+                <div class="command-action">Opens Text/Speech Mode</div>
+            </div>
+            <div class="command-card">
+                <div class="command-emoji">📊</div>
+                <div class="command-voice">"Open Dashboard" / "Dashboard"</div>
+                <div class="command-action">Opens Analytics Dashboard</div>
+            </div>
+            <div class="command-card">
+                <div class="command-emoji">📜</div>
+                <div class="command-voice">"Show History" / "History"</div>
+                <div class="command-action">Shows gesture history</div>
+            </div>
+            <div class="command-card">
+                <div class="command-emoji">🗑️</div>
+                <div class="command-voice">"Delete History" / "Clear History"</div>
+                <div class="command-action">Clears all history</div>
+            </div>
+            <div class="command-card">
+                <div class="command-emoji">🔄</div>
+                <div class="command-voice">"Refresh" / "Fresh"</div>
+                <div class="command-action">Refreshes current page</div>
+            </div>
+            <div class="command-card">
+                <div class="command-emoji">🔊</div>
+                <div class="command-voice">"Speak" / "Say it"</div>
+                <div class="command-action">Speaks current content</div>
+            </div>
+            <div class="command-card">
+                <div class="command-emoji">🏠</div>
+                <div class="command-voice">"Back" / "Return" / "Home"</div>
+                <div class="command-action">Returns to welcome page</div>
+            </div>
+            <div class="command-card">
+                <div class="command-emoji">⏹️</div>
+                <div class="command-voice">"Stop" / "Stop Listening"</div>
+                <div class="command-action">Stops voice recognition</div>
+            </div>
+            <div class="command-card">
+                <div class="command-emoji">❓</div>
+                <div class="command-voice">"Help" / "What can I say"</div>
+                <div class="command-action">Shows this command list</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Popup -->
+    <div class="overlay" id="overlay"></div>
+    <div class="history-popup" id="historyPopup">
+        <div class="popup-header">
+            <h3>📜 Gesture History</h3>
+            <button class="close-popup" id="closePopup">×</button>
+        </div>
+        <div id="historyContent">Loading...</div>
+    </div>
+
+    <script>
+        const micIcon = document.getElementById('micIcon');
+        const statusDiv = document.getElementById('status');
+        const commandTextDiv = document.getElementById('commandText');
+        const overlay = document.getElementById('overlay');
+        const historyPopup = document.getElementById('historyPopup');
+
+        let recognition = null;
+        let isListening = false;
+
+        // Background animation
+        function createBubbles() {
+            const bg = document.getElementById('bgAnimation');
+            for (let i = 0; i < 50; i++) {
+                const span = document.createElement('span');
+                const size = Math.random() * 30 + 5;
+                span.style.width = size + 'px';
+                span.style.height = size + 'px';
+                span.style.left = Math.random() * 100 + '%';
+                span.style.animationDuration = Math.random() * 20 + 10 + 's';
+                span.style.animationDelay = Math.random() * 10 + 's';
+                bg.appendChild(span);
+            }
+        }
+        createBubbles();
+
+        function showStatus(message, type) {
+            statusDiv.innerHTML = message;
+            statusDiv.className = `status ${type}`;
+            setTimeout(() => {
+                if (statusDiv.innerHTML === message) {
+                    statusDiv.innerHTML = '🎙️ Click the microphone and say a command';
+                    statusDiv.className = 'status';
+                }
+            }, 3000);
+        }
+
+        function updateCommandText(text, isError = false) {
+            commandTextDiv.innerHTML = `<span>${isError ? '❌' : '💬'}</span> ${text}`;
+        }
+
+        // Initialize speech recognition
+        function initSpeechRecognition() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                showStatus('❌ Speech recognition not supported. Please use Chrome browser.', 'error');
+                return false;
+            }
+            
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+            
+            recognition.onstart = () => {
+                isListening = true;
+                micIcon.classList.add('listening');
+                showStatus('🎤 Listening... Speak your command now', 'listening');
+                updateCommandText('Listening...', false);
+            };
+            
+            recognition.onresult = (event) => {
+                const command = event.results[0][0].transcript.toLowerCase();
+                console.log('Command:', command);
+                updateCommandText(`"${command}"`);
+                processCommand(command);
+            };
+            
+            recognition.onerror = (event) => {
+                showStatus('❌ Error: ' + event.error, 'error');
+                updateCommandText(`Error: ${event.error}`, true);
+                stopListening();
+            };
+            
+            recognition.onend = () => {
+                stopListening();
+            };
+            
+            return true;
+        }
+
+        function stopListening() {
+            isListening = false;
+            micIcon.classList.remove('listening');
+            if (statusDiv.innerHTML.includes('Listening')) {
+                showStatus('✅ Stopped listening', 'success');
+                setTimeout(() => {
+                    if (statusDiv.innerHTML === '✅ Stopped listening') {
+                        statusDiv.innerHTML = '🎙️ Click the microphone and say a command';
+                        statusDiv.className = 'status';
+                    }
+                }, 2000);
+            }
+        }
+
+        function startListening() {
+            if (!recognition) {
+                if (!initSpeechRecognition()) return;
+            }
+            try {
+                recognition.start();
+            } catch(e) {
+                console.log('Recognition already started');
+                stopListening();
+                setTimeout(() => startListening(), 500);
+            }
+        }
+
+        micIcon.onclick = () => {
+            if (isListening) {
+                recognition.stop();
+                stopListening();
+            } else {
+                startListening();
+            }
+        };
+
+        async function processCommand(command) {
+            // Check for stop command first
+            if (command.includes('stop listening') || command === 'stop' || command === 'stop now') {
+                stopListening();
+                showStatus('✅ Stopped listening', 'success');
+                updateCommandText('Stopped listening. Click mic to start again.');
+                return;
+            }
+
+            // Send to backend
+            try {
+                const response = await fetch('http://localhost:5000/voice/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: command })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showStatus(result.message, 'success');
+                    
+                    switch(result.action) {
+                        case 'navigate':
+                            window.location.href = result.url;
+                            break;
+                        case 'clear_history':
+                            await clearHistory();
+                            break;
+                        case 'show_history':
+                            await showHistoryPopup();
+                            break;
+                        case 'refresh':
+                            window.location.reload();
+                            break;
+                        case 'speak':
+                            await speakCurrentPage();
+                            break;
+                        case 'show_help':
+                            showHelp();
+                            break;
+                        default:
+                            updateCommandText(result.message);
+                    }
+                } else {
+                    showStatus(result.message, 'error');
+                    updateCommandText(result.message, true);
+                }
+            } catch(e) {
+                // Fallback client-side commands
+                if (command.includes('back') || command.includes('return') || command.includes('home')) {
+                    window.location.href = 'welcome.html';
+                } else if (command.includes('refresh') || command.includes('fresh')) {
+                    window.location.reload();
+                } else if (command.includes('help')) {
+                    showHelp();
+                } else {
+                    showStatus('Command not recognized. Say "Help" for commands.', 'error');
+                }
+            }
+        }
+
+        async function clearHistory() {
+            if (confirm('⚠️ Are you sure you want to clear all gesture history?')) {
+                try {
+                    await fetch('http://localhost:5000/clear_history', { method: 'DELETE' });
+                    showStatus('✅ History cleared successfully!', 'success');
+                    updateCommandText('History has been cleared');
+                } catch(e) {
+                    showStatus('Error clearing history', 'error');
+                }
+            }
+        }
+
+        async function showHistoryPopup() {
+            try {
+                const response = await fetch('http://localhost:5000/history');
+                const data = await response.json();
+                
+                if (data.history && data.history.length > 0) {
+                    const historyHtml = data.history.slice(0, 20).map(h => `
+                        <div class="history-item">
+                            <span>${h.gesture_name}</span>
+                            <span>${h.confidence}%</span>
+                            <span style="font-size:0.7rem">${h.mode === 'camera' ? '📹' : '⌨️'}</span>
+                        </div>
+                    `).join('');
+                    document.getElementById('historyContent').innerHTML = historyHtml;
+                } else {
+                    document.getElementById('historyContent').innerHTML = '<div style="text-align:center; padding:20px;">No history yet</div>';
+                }
+                
+                overlay.classList.add('active');
+                historyPopup.classList.add('active');
+                showStatus('Showing history', 'success');
+            } catch(e) {
+                document.getElementById('historyContent').innerHTML = '<div style="text-align:center; padding:20px;">Error loading history</div>';
+                overlay.classList.add('active');
+                historyPopup.classList.add('active');
+            }
+        }
+
+        function closeHistoryPopup() {
+            overlay.classList.remove('active');
+            historyPopup.classList.remove('active');
+        }
+
+        overlay.onclick = closeHistoryPopup;
+        document.getElementById('closePopup').onclick = closeHistoryPopup;
+
+        async function speakCurrentPage() {
+            const pageTitle = document.querySelector('h1')?.innerText || 'Sign Language Reader';
+            const currentGesture = document.getElementById('gestureName')?.innerText || '';
+            const text = `Welcome to ${pageTitle}. ${currentGesture ? `Current gesture is ${currentGesture}.` : ''} You can say commands like open camera, open text, show history, or back to home.`;
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9;
+            utterance.pitch = 1;
+            window.speechSynthesis.speak(utterance);
+            showStatus('🔊 Speaking...', 'success');
+        }
+
+        function showHelp() {
+            const commands = [
+                "Open Camera", "Open Text", "Open Dashboard", "Show History",
+                "Delete History", "Refresh", "Back", "Return", "Stop Listening", "Help"
+            ];
+            const message = `Available commands: ${commands.join(", ")}. Say any of these to control the application.`;
+            
+            const utterance = new SpeechSynthesisUtterance(message);
+            utterance.rate = 0.85;
+            window.speechSynthesis.speak(utterance);
+            
+            showStatus('📢 Help: ' + message, 'command');
+            updateCommandText('Help: ' + commands.join(" • "));
+        }
+
+        // Quick action buttons
+        document.querySelectorAll('.quick-btn').forEach(btn => {
+            btn.onclick = () => {
+                const command = btn.getAttribute('data-command');
+                updateCommandText(`Quick command: "${command}"`);
+                processCommand(command);
+            };
+        });
+
+        console.log('Voice Commands Ready!');
+    </script>
+</body>
+</html>

@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Mode - Sign Language Reader</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-animation span {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.1);
+            padding: 10px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 0.8fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 968px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .video-container {
+            position: relative;
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-stop {
+            background: linear-gradient(135deg, #f44336, #da190b);
+            color: white;
+        }
+
+        button:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .gesture-box {
+            text-align: center;
+            padding: 35px;
+            background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2));
+            border-radius: 25px;
+            margin-bottom: 20px;
+        }
+
+        .gesture-emoji {
+            font-size: 90px;
+            transition: 0.3s;
+            animation: pop 0.5s ease;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .gesture-text {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .confidence-bar {
+            background: rgba(255,255,255,0.2);
+            height: 12px;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            width: 0%;
+            transition: width 0.5s;
+            border-radius: 10px;
+        }
+
+        .status-box {
+            text-align: center;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .status-box.active {
+            background: rgba(76,175,80,0.3);
+            color: #4CAF50;
+        }
+
+        .status-box.cooldown {
+            background: rgba(255,152,0,0.3);
+            color: #ff9800;
+        }
+
+        .status-box.waiting {
+            background: rgba(33,150,243,0.3);
+            color: #2196F3;
+        }
+
+        .history-list {
+            max-height: 320px;
+            overflow-y: auto;
+        }
+
+        .history-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .history-list::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .history-item {
+            background: rgba(255,255,255,0.08);
+            padding: 14px;
+            margin-bottom: 10px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .history-item:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(5px);
+        }
+
+        .history-gesture {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+        }
+
+        .history-confidence {
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 40px;
+            color: #aaa;
+        }
+
+        .flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .icon-btn {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            padding: 8px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            color: white;
+            margin-left: 8px;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        canvas {
+            display: none;
+        }
+
+        .info-text {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 11px;
+            color: #888;
+            line-height: 1.5;
+        }
+
+        .cooldown-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff9800;
+            animation: pulse 1s infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>📹 Camera Mode</h1>
+            <a href="welcome.html" class="back-btn">← Back to Home</a>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>📸 Live Camera Feed</h3>
+                <div class="video-container">
+                    <video id="video" autoplay playsinline muted></video>
+                </div>
+                <canvas id="canvas"></canvas>
+                <div class="btn-group">
+                    <button class="btn-start" id="startBtn">▶ Start Camera</button>
+                    <button class="btn-stop" id="stopBtn" disabled>⏹ Stop Camera</button>
+                </div>
+                <div id="statusBox" class="status-box waiting">
+                    ⚪ Click "Start Camera" to begin
+                </div>
+                <div class="info-text">
+                    💡 <strong>Tips for best accuracy:</strong><br>
+                    • Good lighting • Plain background • Steady hand • Palm facing camera
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <h3>🎯 Recognized Gesture</h3>
+                    <div class="gesture-box">
+                        <div class="gesture-emoji" id="gestureEmoji">🤟</div>
+                        <div class="gesture-text" id="gestureName">Ready</div>
+                    </div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="confidenceFill"></div>
+                    </div>
+                    <div style="text-align: center" id="confidenceText">Confidence: 0%</div>
+                </div>
+
+                <div class="card">
+                    <div class="flex">
+                        <h3>📜 Gesture History</h3>
+                        <div>
+                            <button class="icon-btn" id="refreshBtn" title="Refresh">🔄</button>
+                            <button class="icon-btn" id="clearBtn" title="Clear All" style="color: #ff6b6b;">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="history-list" id="historyList">
+                        <div class="empty-history">No gestures detected yet</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const gestureEmoji = document.getElementById('gestureEmoji');
+        const gestureName = document.getElementById('gestureName');
+        const confidenceFill = document.getElementById('confidenceFill');
+        const confidenceText = document.getElementById('confidenceText');
+        const historyList = document.getElementById('historyList');
+        const statusBox = document.getElementById('statusBox');
+
+        let stream = null;
+        let detectionInterval = null;
+        let isCooldown = false;
+
+        // Background animation
+        function createBubbles() {
+            const bg = document.getElementById('bgAnimation');
+            for (let i = 0; i < 50; i++) {
+                const span = document.createElement('span');
+                const size = Math.random() * 30 + 5;
+                span.style.width = size + 'px';
+                span.style.height = size + 'px';
+                span.style.left = Math.random() * 100 + '%';
+                span.style.animationDuration = Math.random() * 20 + 10 + 's';
+                span.style.animationDelay = Math.random() * 10 + 's';
+                bg.appendChild(span);
+            }
+        }
+        createBubbles();
+
+        function updateStatus(message, type) {
+            statusBox.textContent = message;
+            statusBox.className = `status-box ${type}`;
+        }
+
+        async function startCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: 640, height: 480, facingMode: 'user' } 
+                });
+                video.srcObject = stream;
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                updateStatus('🟢 Camera ON - Auto detection active', 'active');
+                startAutoDetection();
+            } catch(e) {
+                updateStatus('❌ Camera error: ' + e.message, 'cooldown');
+            }
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(t => t.stop());
+                video.srcObject = null;
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                updateStatus('⚪ Camera OFF', 'waiting');
+                if (detectionInterval) {
+                    clearInterval(detectionInterval);
+                    detectionInterval = null;
+                }
+            }
+        }
+
+        function startAutoDetection() {
+            if (detectionInterval) clearInterval(detectionInterval);
+            detectionInterval = setInterval(() => {
+                if (video.videoWidth > 0 && video.videoHeight > 0) {
+                    captureAndDetect();
+                }
+            }, 800);
+        }
+
+        async function captureAndDetect() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            
+            try {
+                const response = await fetch('http://localhost:5000/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: canvas.toDataURL('image/jpeg') })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    gestureName.textContent = result.display_text || result.gesture;
+                    gestureEmoji.textContent = result.emoji;
+                    confidenceFill.style.width = result.confidence + '%';
+                    confidenceText.textContent = `Confidence: ${result.confidence}%`;
+                    
+                    if (result.new_detection === true) {
+                        gestureEmoji.style.animation = 'none';
+                        setTimeout(() => gestureEmoji.style.animation = 'pop 0.5s ease', 10);
+                        updateStatus(`✅ ${result.message}`, 'active');
+                        loadHistory();
+                        setTimeout(() => {
+                            if (statusBox.textContent.includes(result.message)) {
+                                updateStatus('🟢 Camera ON - Auto detection active', 'active');
+                            }
+                        }, 2000);
+                    } else if (result.gesture !== "❌ NO HAND" && result.gesture !== "NO HAND") {
+                        updateStatus('⏱️ Cooldown - Waiting 2.5 seconds before next detection', 'cooldown');
+                    }
+                }
+            } catch(e) {
+                console.log('Detection error:', e);
+                updateStatus('⚠️ Backend error - Check if server is running', 'cooldown');
+            }
+        }
+
+        async function loadHistory() {
+            try {
+                const res = await fetch('http://localhost:5000/history');
+                const data = await res.json();
+                if (data.history && data.history.length > 0) {
+                    const cameraHistory = data.history.filter(h => h.mode === 'camera');
+                    if (cameraHistory.length > 0) {
+                        historyList.innerHTML = cameraHistory.slice(0, 20).map(h => {
+                            let emoji = '🤟';
+                            if (h.gesture_name.includes('🖐️')) emoji = '🖐️';
+                            else if (h.gesture_name.includes('✊')) emoji = '✊';
+                            else if (h.gesture_name.includes('👍')) emoji = '👍';
+                            else if (h.gesture_name.includes('✌️')) emoji = '✌️';
+                            else if (h.gesture_name.includes('☝️')) emoji = '☝️';
+                            else if (h.gesture_name.includes('👌')) emoji = '👌';
+                            else if (h.gesture_name.includes('🤟')) emoji = '🤟';
+                            else if (h.gesture_name.includes('🤙')) emoji = '🤙';
+                            else if (h.gesture_name.includes('🆘')) emoji = '🆘';
+                            else if (h.gesture_name.includes('❌')) emoji = '❌';
+                            return `
+                                <div class="history-item">
+                                    <div class="history-gesture">
+                                        <span>${emoji}</span>
+                                        <span>${h.gesture_name}</span>
+                                    </div>
+                                    <div class="history-confidence">${h.confidence}%</div>
+                                </div>
+                            `;
+                        }).join('');
+                    } else {
+                        historyList.innerHTML = '<div class="empty-history">No camera gestures yet</div>';
+                    }
+                } else {
+                    historyList.innerHTML = '<div class="empty-history">No history yet</div>';
+                }
+            } catch(e) {
+                historyList.innerHTML = '<div class="empty-history">Error loading history</div>';
+            }
+        }
+
+        async function clearHistory() {
+            if (confirm('⚠️ Clear all gesture history?')) {
+                await fetch('http://localhost:5000/clear_history', { method: 'DELETE' });
+                loadHistory();
+                updateStatus('✅ History cleared!', 'active');
+                setTimeout(() => {
+                    updateStatus('🟢 Camera ON - Auto detection active', 'active');
+                }, 2000);
+            }
+        }
+
+        startBtn.onclick = startCamera;
+        stopBtn.onclick = stopCamera;
+        document.getElementById('refreshBtn').onclick = loadHistory;
+        document.getElementById('clearBtn').onclick = clearHistory;
+
+        loadHistory();
+        console.log('Camera Mode Ready - 2.5 second cooldown active');
+    </script>
+</body>
+</html>
