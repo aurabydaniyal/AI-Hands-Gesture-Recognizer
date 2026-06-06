@@ -1,0 +1,516 @@
+{
+  "greetings": [
+    {
+      "input": ["hi", "hello", "hey", "hi there", "hello there", "hey there", "hiya", "greetings"],
+      "gestures": ["👋 HELLO"],
+      "speech": "Hello"
+    },
+    {
+      "input": ["how are you", "how are you doing", "how are ya", "how's it going", "how do you do", "what's up", "sup", "how are things"],
+      "gestures": ["👉 YOU", "❓ HOW", "😊 YOU"],
+      "speech": "How are you"
+    },
+    {
+      "input": ["good morning", "morning", "g'morning"],
+      "gestures": ["🌅 MORNING", "👍 GOOD"],
+      "speech": "Good morning"
+    },
+    {
+      "input": ["good afternoon", "afternoon"],
+      "gestures": ["☀️ AFTERNOON", "👍 GOOD"],
+      "speech": "Good afternoon"
+    },
+    {
+      "input": ["good evening", "evening"],
+      "gestures": ["🌙 EVENING", "👍 GOOD"],
+      "speech": "Good evening"
+    },
+    {
+      "input": ["good night", "night", "gnight"],
+      "gestures": ["🌙 NIGHT", "👍 GOOD"],
+      "speech": "Good night"
+    },
+    {
+      "input": ["bye", "goodbye", "bye bye", "see ya", "see you", "later", "catch you later"],
+      "gestures": ["👋 BYE"],
+      "speech": "Goodbye"
+    },
+    {
+      "input": ["see you later", "see you soon", "see you tomorrow", "see ya later"],
+      "gestures": ["👀 SEE", "👉 YOU", "⏰ LATER"],
+      "speech": "See you later"
+    },
+    {
+      "input": ["take care", "take care of yourself"],
+      "gestures": ["🤲 TAKE", "❤️ CARE"],
+      "speech": "Take care"
+    },
+    {
+      "input": ["nice to meet you", "pleased to meet you", "good to meet you"],
+      "gestures": ["👍 NICE", "🤝 MEET", "👉 YOU"],
+      "speech": "Nice to meet you"
+    }
+  ],
+  "emotions": [
+    {
+      "input": ["i love you", "love you", "i love u", "luv you", "i'm in love with you"],
+      "gestures": ["👉 I", "❤️ LOVE", "👉 YOU"],
+      "speech": "I love you"
+    },
+    {
+      "input": ["i like you", "like you", "i really like you"],
+      "gestures": ["👉 I", "👍 LIKE", "👉 YOU"],
+      "speech": "I like you"
+    },
+    {
+      "input": ["i am happy", "i'm happy", "so happy", "feeling happy"],
+      "gestures": ["👉 I", "😊 HAPPY"],
+      "speech": "I am happy"
+    },
+    {
+      "input": ["i am sad", "i'm sad", "feeling sad", "so sad"],
+      "gestures": ["👉 I", "😢 SAD"],
+      "speech": "I am sad"
+    },
+    {
+      "input": ["i am angry", "i'm angry", "so angry", "mad"],
+      "gestures": ["👉 I", "😠 ANGRY"],
+      "speech": "I am angry"
+    },
+    {
+      "input": ["i am excited", "i'm excited", "so excited"],
+      "gestures": ["👉 I", "🤩 EXCITED"],
+      "speech": "I am excited"
+    },
+    {
+      "input": ["i am scared", "i'm scared", "i'm afraid", "frightened"],
+      "gestures": ["👉 I", "😨 SCARED"],
+      "speech": "I am scared"
+    },
+    {
+      "input": ["i am tired", "i'm tired", "exhausted", "sleepy"],
+      "gestures": ["👉 I", "😴 TIRED"],
+      "speech": "I am tired"
+    },
+    {
+      "input": ["i am confused", "i'm confused", "don't understand"],
+      "gestures": ["👉 I", "🤔 CONFUSED"],
+      "speech": "I am confused"
+    },
+    {
+      "input": ["i am bored", "i'm bored", "boring"],
+      "gestures": ["👉 I", "🥱 BORED"],
+      "speech": "I am bored"
+    }
+  ],
+  "actions": [
+    {
+      "input": ["help me", "please help me", "i need help", "can you help me"],
+      "gestures": ["🆘 HELP", "👉 ME"],
+      "speech": "Help me"
+    },
+    {
+      "input": ["stop", "stop it", "cut it out", "cease"],
+      "gestures": ["✋ STOP"],
+      "speech": "Stop"
+    },
+    {
+      "input": ["wait", "wait a moment", "hold on", "just a second"],
+      "gestures": ["✋ WAIT"],
+      "speech": "Wait"
+    },
+    {
+      "input": ["come here", "come over here", "come closer"],
+      "gestures": ["👉 COME", "⬅️ HERE"],
+      "speech": "Come here"
+    },
+    {
+      "input": ["go there", "go over there"],
+      "gestures": ["👉 GO", "➡️ THERE"],
+      "speech": "Go there"
+    },
+    {
+      "input": ["call me", "give me a call", "phone me"],
+      "gestures": ["🤙 CALL", "👉 ME"],
+      "speech": "Call me"
+    },
+    {
+      "input": ["sit down", "take a seat", "have a seat"],
+      "gestures": ["🪑 SIT", "⬇️ DOWN"],
+      "speech": "Sit down"
+    },
+    {
+      "input": ["stand up", "get up"],
+      "gestures": ["🧍 STAND", "⬆️ UP"],
+      "speech": "Stand up"
+    },
+    {
+      "input": ["look", "look there", "look at that"],
+      "gestures": ["👀 LOOK", "➡️ THERE"],
+      "speech": "Look"
+    },
+    {
+      "input": ["listen", "listen to me", "hear me"],
+      "gestures": ["👂 LISTEN"],
+      "speech": "Listen"
+    },
+    {
+      "input": ["run", "run fast", "hurry"],
+      "gestures": ["🏃 RUN"],
+      "speech": "Run"
+    },
+    {
+      "input": ["walk", "walk slowly"],
+      "gestures": ["🚶 WALK"],
+      "speech": "Walk"
+    }
+  ],
+  "questions": [
+    {
+      "input": ["what is your name", "what's your name", "your name?"],
+      "gestures": ["👉 YOU", "📛 NAME", "❓ WHAT"],
+      "speech": "What is your name"
+    },
+    {
+      "input": ["my name is", "i am called", "they call me"],
+      "gestures": ["👉 I", "📛 NAME"],
+      "speech": "My name is"
+    },
+    {
+      "input": ["where are you", "where are you now", "your location?"],
+      "gestures": ["👉 YOU", "📍 WHERE"],
+      "speech": "Where are you"
+    },
+    {
+      "input": ["what time is it", "what's the time", "current time"],
+      "gestures": ["⏰ TIME", "❓ WHAT"],
+      "speech": "What time is it"
+    },
+    {
+      "input": ["how old are you", "your age?", "what is your age"],
+      "gestures": ["👉 YOU", "🎂 OLD", "❓ HOW"],
+      "speech": "How old are you"
+    },
+    {
+      "input": ["where do you live", "your home?", "where is your house"],
+      "gestures": ["👉 YOU", "🏠 LIVE", "📍 WHERE"],
+      "speech": "Where do you live"
+    },
+    {
+      "input": ["why", "why is that", "why not"],
+      "gestures": ["❓ WHY"],
+      "speech": "Why"
+    },
+    {
+      "input": ["who are you", "who is this", "identify yourself"],
+      "gestures": ["👤 WHO", "👉 YOU"],
+      "speech": "Who are you"
+    },
+    {
+      "input": ["how does this work", "how to use", "explain this"],
+      "gestures": ["❓ HOW", "⚙️ WORK"],
+      "speech": "How does this work"
+    }
+  ],
+  "food_and_drink": [
+    {
+      "input": ["i am hungry", "i'm hungry", "feeling hungry", "starving"],
+      "gestures": ["👉 I", "🍽️ HUNGRY"],
+      "speech": "I am hungry"
+    },
+    {
+      "input": ["i am thirsty", "i'm thirsty", "feeling thirsty"],
+      "gestures": ["👉 I", "💧 THIRSTY"],
+      "speech": "I am thirsty"
+    },
+    {
+      "input": ["i want pizza", "pizza please", "give me pizza"],
+      "gestures": ["👉 I", "🤲 WANT", "🍕 PIZZA"],
+      "speech": "I want pizza"
+    },
+    {
+      "input": ["i want water", "water please", "give me water"],
+      "gestures": ["👉 I", "🤲 WANT", "💧 WATER"],
+      "speech": "I want water"
+    },
+    {
+      "input": ["i want coffee", "coffee please", "need coffee"],
+      "gestures": ["👉 I", "🤲 WANT", "☕ COFFEE"],
+      "speech": "I want coffee"
+    },
+    {
+      "input": ["i want tea", "tea please", "cup of tea"],
+      "gestures": ["👉 I", "🤲 WANT", "🍵 TEA"],
+      "speech": "I want tea"
+    },
+    {
+      "input": ["i want food", "some food please", "give me food"],
+      "gestures": ["👉 I", "🤲 WANT", "🍲 FOOD"],
+      "speech": "I want food"
+    },
+    {
+      "input": ["delicious", "tasty", "yummy", "so good"],
+      "gestures": ["😋 DELICIOUS"],
+      "speech": "Delicious"
+    },
+    {
+      "input": ["i am full", "i'm full", "can't eat more"],
+      "gestures": ["👉 I", "🙅 FULL"],
+      "speech": "I am full"
+    }
+  ],
+  "travel_direction": [
+    {
+      "input": ["let's go", "lets go", "come on", "move", "go go go"],
+      "gestures": ["👉 WE", "➡️ GO"],
+      "speech": "Let's go"
+    },
+    {
+      "input": ["take me there", "bring me there", "lead me there"],
+      "gestures": ["👉 ME", "🚗 TAKE", "➡️ THERE"],
+      "speech": "Take me there"
+    },
+    {
+      "input": ["turn left", "go left"],
+      "gestures": ["⬅️ TURN LEFT"],
+      "speech": "Turn left"
+    },
+    {
+      "input": ["turn right", "go right"],
+      "gestures": ["➡️ TURN RIGHT"],
+      "speech": "Turn right"
+    },
+    {
+      "input": ["go straight", "straight ahead", "continue straight"],
+      "gestures": ["⬆️ GO STRAIGHT"],
+      "speech": "Go straight"
+    },
+    {
+      "input": ["where is", "find", "locate"],
+      "gestures": ["🔍 WHERE", "📍 LOCATE"],
+      "speech": "Where is"
+    },
+    {
+      "input": ["near me", "close by", "nearby"],
+      "gestures": ["📍 NEAR", "👉 ME"],
+      "speech": "Near me"
+    },
+    {
+      "input": ["far away", "distant", "too far"],
+      "gestures": ["📍 FAR", "➡️ AWAY"],
+      "speech": "Far away"
+    }
+  ],
+  "numbers": [
+    {"input": ["one", "1", "single"], "gestures": ["1️⃣ ONE"], "speech": "One"},
+    {"input": ["two", "2", "pair", "couple"], "gestures": ["2️⃣ TWO"], "speech": "Two"},
+    {"input": ["three", "3"], "gestures": ["3️⃣ THREE"], "speech": "Three"},
+    {"input": ["four", "4"], "gestures": ["4️⃣ FOUR"], "speech": "Four"},
+    {"input": ["five", "5"], "gestures": ["5️⃣ FIVE"], "speech": "Five"},
+    {"input": ["six", "6"], "gestures": ["6️⃣ SIX"], "speech": "Six"},
+    {"input": ["seven", "7"], "gestures": ["7️⃣ SEVEN"], "speech": "Seven"},
+    {"input": ["eight", "8"], "gestures": ["8️⃣ EIGHT"], "speech": "Eight"},
+    {"input": ["nine", "9"], "gestures": ["9️⃣ NINE"], "speech": "Nine"},
+    {"input": ["ten", "10"], "gestures": ["🔟 TEN"], "speech": "Ten"},
+    {"input": ["zero", "0", "nothing"], "gestures": ["0️⃣ ZERO"], "speech": "Zero"}
+  ],
+  "common_phrases": [
+    {
+      "input": ["thank you", "thanks", "thank you so much", "thanks a lot", "much appreciated", "i appreciate it"],
+      "gestures": ["🙏 THANK YOU"],
+      "speech": "Thank you"
+    },
+    {
+      "input": ["sorry", "i am sorry", "i'm sorry", "apologies", "my bad", "pardon me"],
+      "gestures": ["🙏 SORRY"],
+      "speech": "Sorry"
+    },
+    {
+      "input": ["please", "pls", "kindly"],
+      "gestures": ["🙏 PLEASE"],
+      "speech": "Please"
+    },
+    {
+      "input": ["excuse me", "pardon", "sorry to bother"],
+      "gestures": ["🙏 EXCUSE ME"],
+      "speech": "Excuse me"
+    },
+    {
+      "input": ["no problem", "no worries", "it's okay", "all good"],
+      "gestures": ["🚫 NO", "✅ PROBLEM"],
+      "speech": "No problem"
+    },
+    {
+      "input": ["you're welcome", "welcome", "my pleasure"],
+      "gestures": ["👍 WELCOME"],
+      "speech": "You're welcome"
+    },
+    {
+      "input": ["good luck", "best of luck"],
+      "gestures": ["🍀 GOOD LUCK"],
+      "speech": "Good luck"
+    },
+    {
+      "input": ["congratulations", "congrats", "well done"],
+      "gestures": ["🎉 CONGRATULATIONS"],
+      "speech": "Congratulations"
+    }
+  ],
+  "yes_no": [
+    {
+      "input": ["yes", "yeah", "yep", "yup", "sure", "okay", "ok", "alright", "correct", "right"],
+      "gestures": ["👍 YES", "✅ YES"],
+      "speech": "Yes"
+    },
+    {
+      "input": ["no", "nah", "nope", "not really", "wrong", "incorrect"],
+      "gestures": ["👎 NO", "❌ NO"],
+      "speech": "No"
+    },
+    {
+      "input": ["maybe", "perhaps", "possibly", "could be"],
+      "gestures": ["🤔 MAYBE"],
+      "speech": "Maybe"
+    }
+  ],
+  "feelings_health": [
+    {
+      "input": ["i am sick", "i'm sick", "not feeling well", "ill"],
+      "gestures": ["👉 I", "🤒 SICK"],
+      "speech": "I am sick"
+    },
+    {
+      "input": ["i am cold", "i'm cold", "freezing"],
+      "gestures": ["👉 I", "❄️ COLD"],
+      "speech": "I am cold"
+    },
+    {
+      "input": ["i am hot", "i'm hot", "feeling hot"],
+      "gestures": ["👉 I", "🔥 HOT"],
+      "speech": "I am hot"
+    },
+    {
+      "input": ["i am fine", "i'm fine", "doing well", "all good"],
+      "gestures": ["👉 I", "👍 FINE"],
+      "speech": "I am fine"
+    },
+    {
+      "input": ["i need a doctor", "call a doctor", "medical help"],
+      "gestures": ["👉 I", "🆘 NEED", "👨‍⚕️ DOCTOR"],
+      "speech": "I need a doctor"
+    }
+  ],
+  "time": [
+    {
+      "input": ["today", "this day"],
+      "gestures": ["📅 TODAY"],
+      "speech": "Today"
+    },
+    {
+      "input": ["tomorrow", "next day"],
+      "gestures": ["📅 TOMORROW"],
+      "speech": "Tomorrow"
+    },
+    {
+      "input": ["yesterday", "previous day"],
+      "gestures": ["📅 YESTERDAY"],
+      "speech": "Yesterday"
+    },
+    {
+      "input": ["now", "right now", "immediately", "at once"],
+      "gestures": ["⏰ NOW"],
+      "speech": "Now"
+    },
+    {
+      "input": ["later", "after some time", "in a while"],
+      "gestures": ["⏰ LATER"],
+      "speech": "Later"
+    },
+    {
+      "input": ["early", "too early"],
+      "gestures": ["🌅 EARLY"],
+      "speech": "Early"
+    },
+    {
+      "input": ["late", "too late", "delayed"],
+      "gestures": ["🌙 LATE"],
+      "speech": "Late"
+    }
+  ],
+  "emergency": [
+    {
+      "input": ["help", "emergency", "save me", "somebody help"],
+      "gestures": ["🆘 HELP", "🚨 EMERGENCY"],
+      "speech": "Help"
+    },
+    {
+      "input": ["fire", "fire emergency", "there is fire"],
+      "gestures": ["🔥 FIRE", "🚨 EMERGENCY"],
+      "speech": "Fire"
+    },
+    {
+      "input": ["police", "call police", "need police"],
+      "gestures": ["👮 POLICE", "📞 CALL"],
+      "speech": "Police"
+    },
+    {
+      "input": ["ambulance", "need ambulance", "medical emergency"],
+      "gestures": ["🚑 AMBULANCE", "🆘 EMERGENCY"],
+      "speech": "Ambulance"
+    },
+    {
+      "input": ["danger", "dangerous", "be careful"],
+      "gestures": ["⚠️ DANGER"],
+      "speech": "Danger"
+    }
+  ],
+  "social": [
+    {
+      "input": ["friend", "my friend", "buddy", "pal"],
+      "gestures": ["👥 FRIEND"],
+      "speech": "Friend"
+    },
+    {
+      "input": ["family", "my family", "relatives"],
+      "gestures": ["👪 FAMILY"],
+      "speech": "Family"
+    },
+    {
+      "input": ["work", "job", "office", "employment"],
+      "gestures": ["💼 WORK"],
+      "speech": "Work"
+    },
+    {
+      "input": ["school", "college", "university", "class"],
+      "gestures": ["🏫 SCHOOL"],
+      "speech": "School"
+    },
+    {
+      "input": ["home", "house", "my place"],
+      "gestures": ["🏠 HOME"],
+      "speech": "Home"
+    }
+  ],
+  "technology": [
+    {
+      "input": ["internet", "wifi", "network"],
+      "gestures": ["🌐 INTERNET"],
+      "speech": "Internet"
+    },
+    {
+      "input": ["phone", "mobile", "cellphone", "smartphone"],
+      "gestures": ["📱 PHONE"],
+      "speech": "Phone"
+    },
+    {
+      "input": ["computer", "laptop", "pc", "desktop"],
+      "gestures": ["💻 COMPUTER"],
+      "speech": "Computer"
+    },
+    {
+      "input": ["battery low", "low battery", "charge needed"],
+      "gestures": ["🔋 BATTERY", "⚠️ LOW"],
+      "speech": "Battery low"
+    }
+  ]
+}
