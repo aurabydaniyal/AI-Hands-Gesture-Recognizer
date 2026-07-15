@@ -51,7 +51,7 @@ An AI-powered real-time Sign Language Recognition System that helps bridge commu
 - if you dont create xammp or db its okay just then history is not saving . 
 - You can see app.py and create db and tables acc to it in you xammp/phpmyadmin using sql .
 
-## 👨‍💻 Authors
+## 👨‍💻 Author
 
 * M. Daniyal
 
