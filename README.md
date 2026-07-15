@@ -55,4 +55,10 @@ An AI-powered real-time Sign Language Recognition System that helps bridge commu
 
 * M. Daniyal
 
+### 1. Clone the Repository
+```bash
+git clone https://github.com/aurabydaniyal/AI-Hands-Gesture-Recognizer.git
+cd AI-Hands-Gesture-Recognizer
+```
+  
 ⭐ If you like this project, give it a star on GitHub!
